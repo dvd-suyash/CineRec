@@ -7,7 +7,7 @@ from cinerec.core.config import settings
 class GeminiProvider:
     def __init__(self):
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY.get_secret_value())
-        self.model = "gemini-1.5-flash"
+        self.model = "gemini-3.8-flash"
 
     async def chat_stream(
         self, 
@@ -23,7 +23,7 @@ class GeminiProvider:
         for msg in messages:
             role = "user" if msg["role"] == "user" else "model"
             formatted_contents.append(
-                types.Content(role=role, parts=[types.Part.from_text(msg["content"])])
+                types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])])
             )
 
         response = await self.client.aio.models.generate_content_stream(
