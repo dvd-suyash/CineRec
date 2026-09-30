@@ -150,7 +150,7 @@ export function VisualRecommendations({ vibeTitle, movies, onModalChange }: Visu
           className="flex justify-between items-center w-full relative z-10 px-2 md:px-8"
         >
           {/* Left Wing */}
-          <div className="flex flex-wrap md:flex-nowrap gap-4 w-[40%] justify-end">
+          <div className="flex flex-wrap md:flex-nowrap gap-4 w-full md:w-[40%] justify-center md:justify-end">
             {movies.slice(0, Math.ceil(movies.length / 2)).map((movie, i) => (
               <CinematicCard 
                 key={movie.tmdb_id || movie.title} 
@@ -162,10 +162,10 @@ export function VisualRecommendations({ vibeTitle, movies, onModalChange }: Visu
           </div>
 
           {/* Central Void for Arachne */}
-          <div className="w-[20%] pointer-events-none flex-shrink-0" />
+          <div className="hidden md:block w-[20%] pointer-events-none flex-shrink-0" />
 
           {/* Right Wing */}
-          <div className="flex flex-wrap md:flex-nowrap gap-4 w-[40%] justify-start">
+          <div className="flex flex-wrap md:flex-nowrap gap-4 w-full md:w-[40%] justify-center md:justify-start">
             {movies.slice(Math.ceil(movies.length / 2)).map((movie, i) => (
               <CinematicCard 
                 key={movie.tmdb_id || movie.title} 
@@ -255,7 +255,7 @@ export function VisualRecommendations({ vibeTitle, movies, onModalChange }: Visu
                   {/* Right Column: Editorial Typography */}
                   <motion.div 
                     layoutId={`meta-${selectedMovie.tmdb_id || selectedMovie.title}`}
-                    className="w-full md:w-1/2 h-1/2 md:h-full p-8 md:p-16 flex flex-col justify-center relative bg-zinc-950"
+                    className="w-full md:w-1/2 h-1/2 md:h-full p-6 md:p-16 flex flex-col justify-start md:justify-center relative bg-zinc-950 overflow-y-auto scrollbar-none"
                   >
                     <motion.div
                       initial={{ opacity: 0, x: 20 }}
@@ -277,13 +277,13 @@ export function VisualRecommendations({ vibeTitle, movies, onModalChange }: Visu
                         <span>CINEREC MATCH</span>
                       </div>
                       
-                      <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.9] mb-8">
+                      <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-6 md:mb-8">
                         {selectedMovie.title}
                       </h2>
                       
                       <div className="h-px w-24 bg-white/20 mb-8" />
                       
-                      <p className="text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-lg mb-12">
+                      <p className="text-lg md:text-2xl font-light text-white/70 leading-relaxed max-w-lg mb-8 md:mb-12">
                         {selectedMovie.justification}
                       </p>
 

@@ -34,7 +34,7 @@ export default function DashboardPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       
       {/* Navigation */}
-      <header className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-8 py-6 backdrop-blur-md bg-transparent border-b border-white/5">
+      <header className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 md:px-8 py-4 md:py-6 backdrop-blur-md bg-transparent border-b border-white/5">
         <Link href="/" className="flex items-center gap-4 group">
           <div className="p-2 -ml-2 text-white/50 group-hover:text-white transition-colors rounded-full group-hover:bg-white/5">
             <ArrowLeftIcon className="size-5" />
@@ -65,7 +65,7 @@ export default function DashboardPage() {
           {/* Card 1: Vibe Map (Spans 2x2) */}
           <motion.div 
             whileHover={{ scale: 0.98 }}
-            className="md:col-span-2 md:row-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col justify-between aspect-square md:aspect-auto overflow-hidden relative group"
+            className="md:col-span-2 md:row-span-2 bg-white/5 border border-white/10 rounded-3xl p-6 md:p-12 flex flex-col justify-between aspect-square md:aspect-auto overflow-hidden relative group"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#CCFF00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10">
@@ -97,7 +97,7 @@ export default function DashboardPage() {
           {/* Card 2: Recent Memory */}
           <motion.div 
             whileHover={{ scale: 0.98 }}
-            className="bg-zinc-900 border border-white/10 rounded-3xl p-8 flex flex-col justify-between group relative overflow-hidden"
+            className="bg-zinc-900 border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-between group relative overflow-hidden"
           >
              <div className="absolute -right-10 -top-10 size-40 bg-white/5 rounded-full blur-3xl group-hover:bg-[#CCFF00]/20 transition-colors duration-1000" />
             <div className="relative z-10">
@@ -111,11 +111,11 @@ export default function DashboardPage() {
           {/* Card 3: Stat Box */}
           <motion.div 
             whileHover={{ scale: 0.98 }}
-            className="bg-[#CCFF00] text-black border border-[#CCFF00]/50 rounded-3xl p-8 flex flex-col justify-end min-h-[240px] group relative overflow-hidden"
+            className="bg-[#CCFF00] text-black border border-[#CCFF00]/50 rounded-3xl p-6 md:p-8 flex flex-col justify-end min-h-[240px] group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 mix-blend-overlay transition-opacity duration-500" />
             <div className="relative z-10">
-              <div className="text-7xl font-black tracking-tighter leading-none mb-2">{data?.watchlist?.length || 0}</div>
+              <div className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-2">{data?.watchlist?.length || 0}</div>
               <div className="text-sm font-bold uppercase tracking-widest opacity-70">Watchlist Size</div>
             </div>
           </motion.div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
           {/* Card 4: Most Explored Director */}
           <motion.div 
             whileHover={{ scale: 0.98 }}
-            className="md:col-span-2 bg-gradient-to-r from-zinc-900 to-black border border-white/10 rounded-3xl p-8 md:p-12 flex items-center justify-between overflow-hidden relative group"
+            className="md:col-span-2 bg-gradient-to-r from-zinc-900 to-black border border-white/10 rounded-3xl p-6 md:p-12 flex items-center justify-between overflow-hidden relative group"
           >
             <div className="absolute right-0 top-0 bottom-0 w-2/3 md:w-1/2 opacity-20 mix-blend-luminosity bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style={{ backgroundImage: `url('${data?.fixation?.image || ''}')` }} />
             <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-900/80 to-transparent" />

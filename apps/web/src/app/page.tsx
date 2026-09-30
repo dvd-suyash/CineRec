@@ -383,7 +383,7 @@ export default function Home() {
       <motion.form 
         layout
         onSubmit={handleSend}
-        className="w-full max-w-3xl fixed bottom-12 left-1/2 -translate-x-1/2 z-50 px-6 group pointer-events-auto"
+        className="w-full max-w-3xl fixed bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 z-50 px-4 md:px-6 group pointer-events-auto"
       >
         <div className="relative flex items-center bg-zinc-950/60 backdrop-blur-2xl border border-white/10 hover:border-white/20 focus-within:border-[#CCFF00]/50 focus-within:bg-zinc-950/90 rounded-full shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-500 overflow-hidden pl-8 pr-2 py-2">
           <input 
@@ -422,7 +422,7 @@ export default function Home() {
               exit={{ scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-w-2xl w-full bg-[#111] border border-white/10 rounded-2xl p-10 md:p-16 shadow-2xl relative overflow-hidden"
+              className="max-w-2xl w-full bg-[#111] border border-white/10 rounded-2xl p-6 md:p-16 shadow-2xl relative overflow-hidden"
             >
               {/* Decorative Element */}
               <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#CCFF00]/10 rounded-full blur-[100px] pointer-events-none" />
@@ -468,7 +468,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Right Side Pagination Timeline */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-3 items-end pointer-events-auto">
+      <div className="fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-3 items-end pointer-events-auto">
         {chatPairs.length === 0 && (
            <div className="w-5 h-[2px] bg-white/20 rounded-full" />
         )}
