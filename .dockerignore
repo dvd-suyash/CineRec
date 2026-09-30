@@ -1,0 +1,22 @@
+.git
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov
+.DS_Store
+
+# Frontend
+apps/web/node_modules
+apps/web/.next
+apps/web/out
+apps/web/build
+apps/web/.env.local
+apps/web/.env.development.local
+apps/web/.env.test.local
+apps/web/.env.production.local
