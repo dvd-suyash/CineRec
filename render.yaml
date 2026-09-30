@@ -1,0 +1,62 @@
+services:
+  # Backend API (FastAPI)
+  - type: web
+    name: cinerec-api
+    env: docker
+    dockerfilePath: ./Dockerfile.api
+    plan: free
+    region: ohio
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cinerec-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: pserv
+          name: cinerec-redis
+          property: connectionString
+      - key: TMDB_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # Background Workers (Celery)
+  - type: worker
+    name: cinerec-worker
+    env: docker
+    dockerfilePath: ./Dockerfile.api
+    dockerCommand: "celery -A apps.worker.worker worker --loglevel=info"
+    plan: free
+    region: ohio
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cinerec-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: pserv
+          name: cinerec-redis
+          property: connectionString
+      - key: TMDB_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # Private Redis Cache/Queue
+  - type: pserv
+    name: cinerec-redis
+    env: image
+    image:
+      url: redis:alpine
+    plan: free
+    region: ohio
+
+databases:
+  # PostgreSQL Database
+  - name: cinerec-db
+    plan: free
+    region: ohio
+    databaseName: cinerec
+    user: cinerec_user
