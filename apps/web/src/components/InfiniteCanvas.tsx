@@ -97,9 +97,7 @@ export const InfiniteCanvas = ({
       const isMobile = window.innerWidth < 768;
       
       if (isMobile) {
-        // On mobile, force a massive tall and wide grid to completely envelop the viewport
-        cols = 14; 
-        const rows = Math.floor(numberOfImages / cols); // 150 / 14 = 10 rows (3600px height)
+        cols = 30; // Brutally flat cylinder radius
       } else {
         const screenAspect = window.innerWidth / window.innerHeight;
         const itemAspect = itemW / itemH;
@@ -202,7 +200,7 @@ export const InfiniteCanvas = ({
         
         // Hide elements that rotate to the back half of the cylinder
         // This completely fixes the CSS 3D opacity clipping bug
-        if (finalZ > radius * 0.5) { // Only cull the deep back half to preserve the side walls!
+        if (finalZ > radius * 0.95) { // Only cull the deep back half to preserve the side walls!
           gsap.set(item, { display: "none" });
           return;
         }
@@ -287,7 +285,7 @@ export const InfiniteCanvas = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none perspective-[1500px] ${className}`}
+      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none [perspective:1500px] ${className}`}
     >
       <div
         ref={wrapperRef}
