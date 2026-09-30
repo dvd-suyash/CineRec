@@ -20,6 +20,7 @@ export default function Home() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHoveringEntity, setIsHoveringEntity] = useState(false);
   const [isMovieModalOpen, setIsMovieModalOpen] = useState(false);
+  const [isTimelineHovered, setIsTimelineHovered] = useState(false);
   
   const [activeIndex, setActiveIndex] = useState(0);
   const lastScrollTime = useRef(0);
@@ -467,25 +468,73 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Right Side Pagination Timeline */}
-      <div className="fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-3 items-end pointer-events-auto">
-        {chatPairs.length === 0 && (
-           <div className="w-5 h-[2px] bg-white/20 rounded-full" />
-        )}
-        {chatPairs.map((pair, idx) => (
-          <div key={idx} className="relative group/line flex items-center justify-end">
-            {/* Tooltip on hover (pops out to the LEFT of the line) */}
-            <div className="absolute right-10 px-3 py-1.5 bg-zinc-900 border border-white/10 rounded-lg text-[10px] uppercase font-bold tracking-widest text-white opacity-0 group-hover/line:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-2xl">
-              {pair.user.content.length > 30 ? pair.user.content.slice(0, 30) + "..." : pair.user.content}
-            </div>
-            
-            {/* The line */}
-            <button 
+      {/* Right Side Pagination Timeline — ChatGPT-style hover expand */}
+      <div
+        className="fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-[60] pointer-events-auto flex items-center justify-end"
+        onMouseEnter={() => setIsTimelineHovered(true)}
+        onMouseLeave={() => setIsTimelineHovered(false)}
+      >
+        {/* Expanded preview panel — slides in from the right */}
+        <AnimatePresence>
+          {isTimelineHovered && chatPairs.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20, width: 0 }}
+              animate={{ opacity: 1, x: 0, width: "auto" }}
+              exit={{ opacity: 0, x: 20, width: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="mr-3 overflow-hidden"
+            >
+              <div className="flex flex-col gap-1 py-2 px-1 rounded-xl bg-zinc-950/80 backdrop-blur-xl border border-white/[0.06] shadow-2xl min-w-[200px] max-w-[260px] max-h-[60vh] overflow-y-auto scrollbar-none">
+                {chatPairs.map((pair, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => { setActiveIndex(idx); setIsTimelineHovered(false); }}
+                    className={`group/row flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
+                      activeIndex === idx
+                        ? 'bg-[#CCFF00]/10'
+                        : 'hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    {/* Dot indicator */}
+                    <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${
+                      activeIndex === idx
+                        ? 'bg-[#CCFF00] shadow-[0_0_6px_rgba(204,255,0,0.5)]'
+                        : 'bg-white/30 group-hover/row:bg-white/60'
+                    }`} />
+                    {/* Prompt text */}
+                    <span className={`text-[11px] leading-tight font-medium truncate transition-colors duration-200 ${
+                      activeIndex === idx
+                        ? 'text-[#CCFF00]/90'
+                        : 'text-white/50 group-hover/row:text-white/80'
+                    }`}>
+                      {pair.user.content.length > 40 ? pair.user.content.slice(0, 40) + "…" : pair.user.content}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* The thin lines (always visible) */}
+        <div className="flex flex-col gap-2 items-end">
+          {chatPairs.length === 0 && (
+            <div className="w-5 h-[2px] bg-white/20 rounded-full" />
+          )}
+          {chatPairs.map((_, idx) => (
+            <button
+              key={idx}
               onClick={() => setActiveIndex(idx)}
-              className={`h-[2px] rounded-full transition-all duration-300 ${activeIndex === idx ? 'w-8 bg-[#CCFF00] shadow-[0_0_10px_rgba(204,255,0,0.5)]' : 'w-4 bg-white/40 hover:bg-white hover:w-6'}`}
+              className={`h-[2px] rounded-full transition-all duration-300 ${
+                activeIndex === idx
+                  ? 'w-8 bg-[#CCFF00] shadow-[0_0_10px_rgba(204,255,0,0.5)]'
+                  : isTimelineHovered
+                    ? 'w-5 bg-white/50'
+                    : 'w-4 bg-white/40 hover:bg-white hover:w-6'
+              }`}
             />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
     </main>
