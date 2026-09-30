@@ -8,7 +8,7 @@ from apps.api.app.dependencies.auth import get_current_user
 from cinerec.infrastructure.db.models.user import User
 from cinerec.infrastructure.db.models.activity import Watchlist
 from cinerec.infrastructure.db.models.movie import Movie, MovieProviderId
-from cinerec.infrastructure.db.models.memory import UserMemory
+from cinerec.infrastructure.db.models.memory import Memory
 from cinerec.core.api import DataResponse
 
 router = APIRouter()
@@ -42,9 +42,9 @@ async def get_dashboard(
             })
 
     # 2. Fetch Memories
-    stmt_memories = select(UserMemory).where(UserMemory.user_id == current_user.id).order_by(UserMemory.created_at.desc()).limit(3)
+    stmt_memories = select(Memory).where(Memory.user_id == current_user.id).order_by(Memory.created_at.desc()).limit(3)
     result_memories = await db.execute(stmt_memories)
-    memories_data = [m.content for m in result_memories.scalars().all()]
+    memories_data = [m.value for m in result_memories.scalars().all()]
     
     if not memories_data:
         memories_data = ["Arachne is watching. Your cinematic essence is still forming."]
