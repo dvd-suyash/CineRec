@@ -202,7 +202,7 @@ export const InfiniteCanvas = ({
         
         // Hide elements that rotate to the back half of the cylinder
         // This completely fixes the CSS 3D opacity clipping bug
-        if (finalZ > -100) {
+        if (finalZ > radius * 0.5) { // Only cull the deep back half to preserve the side walls!
           gsap.set(item, { display: "none" });
           return;
         }
