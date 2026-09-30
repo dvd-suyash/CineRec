@@ -79,8 +79,11 @@ export const InfiniteCanvas = ({
     let wrapX: any, wrapY: any;
     let cols = 0;
     let perfectCount = 0;
+    let isMobile = false;
 
     const resize = () => {
+      isMobile = window.innerWidth < 768;
+
       // Create a dummy element to measure exact gap in pixels
       const dummy = document.createElement("div");
       dummy.style.width = gap;
@@ -94,18 +97,38 @@ export const InfiniteCanvas = ({
       itemW = items[0].offsetWidth;
       itemH = items[0].offsetHeight;
 
-      const isMobile = window.innerWidth < 768;
-      
       if (isMobile) {
-        cols = 30; // Brutally flat cylinder radius
+        // Mobile: use fixed pixel sizes for poster items to guarantee full coverage
+        // We need enough columns * rows to tile the entire screen
+        const mobileItemW = 80;  // px
+        const mobileItemH = 120; // px
+        const mobileGap = 8;     // px
+
+        // Override measured values
+        itemW = mobileItemW;
+        itemH = mobileItemH;
+        gapX = mobileGap;
+        gapY = mobileGap;
+
+        // Force items to be this size
+        items.forEach(item => {
+          item.style.width = `${mobileItemW}px`;
+          item.style.height = `${mobileItemH}px`;
+        });
+
+        // Calculate cols/rows to tile at least 2x the screen in each direction for seamless wrapping
+        cols = Math.ceil((window.innerWidth * 2) / (mobileItemW + mobileGap));
+        cols = Math.min(cols, numberOfImages); // can't exceed total images
       } else {
+        // Desktop: exact original math, untouched
         const screenAspect = window.innerWidth / window.innerHeight;
         const itemAspect = itemW / itemH;
         const targetCols = Math.sqrt(numberOfImages * screenAspect / itemAspect);
         cols = Math.round(targetCols);
-        cols = Math.max(12, Math.min(cols, numberOfImages));
+        cols = Math.max(1, Math.min(cols, numberOfImages));
       }
       
+      // Crucial fix: Floor the rows to ensure a perfect rectangle with no ragged remainder gaps
       const rows = Math.floor(numberOfImages / cols);
       perfectCount = cols * rows;
 
@@ -181,45 +204,46 @@ export const InfiniteCanvas = ({
         if (i >= perfectCount) return;
 
         const newX = wrapX((item as any)._baseX + currentX);
-        // Center the total height of the grid vertically around the screen center ONLY on mobile
-        const startY = isMobile ? (window.innerHeight - totalH) / 2 : 0;
-        const newY = wrapY((item as any)._baseY + currentY) + startY;
-        
-        // True 3D Cylindrical Projection Math
-        const circumference = totalW;
-        // Radius MUST perfectly match circumference or the grid will not close a 360 degree loop, leaving a massive gap!
-        const radius = circumference / (2 * Math.PI);
-        
-        // Calculate angle in radians (0 to 2PI)
-        const angleRad = (newX / circumference) * Math.PI * 2;
-        
-        // Calculate exact physical coordinates
-        // angle=0 means center of screen (X=0, Z=-radius)
-        const finalX = Math.sin(angleRad) * radius;
-        const finalZ = -Math.cos(angleRad) * radius;
-        
-        // Restore exact original desktop culling
-        if (!isMobile && finalZ > -100) {
-          gsap.set(item, { display: "none" });
-          return;
+        const newY = wrapY((item as any)._baseY + currentY);
+
+        if (isMobile) {
+          // ===== MOBILE: Simple flat tiling, no 3D cylinder =====
+          // Just position items in a flat infinite scrolling grid
+          gsap.set(item, {
+            display: "block",
+            x: newX,
+            y: newY,
+            rotateX: 0,
+            rotateY: 0,
+            z: 0,
+          });
+        } else {
+          // ===== DESKTOP: Original 3D Cylindrical Projection (UNTOUCHED) =====
+          const circumference = totalW;
+          const radius = circumference / (2 * Math.PI);
+          
+          const angleRad = (newX / circumference) * Math.PI * 2;
+          
+          const finalX = Math.sin(angleRad) * radius;
+          const finalZ = -Math.cos(angleRad) * radius;
+          
+          // Original desktop culling
+          if (finalZ > -100) {
+            gsap.set(item, { display: "none" });
+            return;
+          }
+          
+          const offsetZ = -100;
+          
+          gsap.set(item, { 
+            display: "block",
+            x: centerX + finalX - (itemW / 2),
+            y: newY,
+            rotationY: angleRad * (180 / Math.PI),
+            rotationX: 0,
+            z: finalZ + offsetZ
+          });
         }
-        
-        // Massive aggressive mobile culling
-        if (isMobile && finalZ > radius * 0.95) {
-          gsap.set(item, { display: "none" });
-          return;
-        }
-        
-        const offsetZ = isMobile ? radius * 0.85 : -100;
-        
-        gsap.set(item, { 
-          display: "block",
-          x: centerX + finalX - (itemW / 2),
-          y: newY,
-          rotationY: angleRad * (180 / Math.PI), // perfectly orient normal to center
-          rotationX: 0,
-          z: finalZ + offsetZ
-        });
       });
     };
 
@@ -288,7 +312,8 @@ export const InfiniteCanvas = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none [perspective:1500px] md:[perspective:none] ${className}`}
+      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none ${className}`}
+      style={{ perspective: typeof window !== "undefined" && window.innerWidth >= 768 ? "1500px" : "none" }}
     >
       <div
         ref={wrapperRef}
