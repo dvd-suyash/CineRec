@@ -11,7 +11,7 @@ services:
       name: cinerec-db
       property: connectionString
   - key: REDIS_URL
-    value: redis://cinerec-redis:6379
+    value: redis://localhost:6379/0
   - key: TMDB_API_KEY
     sync: false
   - key: GEMINI_API_KEY
@@ -22,37 +22,7 @@ services:
     sync: false
   - key: GOOGLE_CLIENT_SECRET
     sync: false
-- type: worker
-  name: cinerec-worker
-  env: docker
-  dockerfilePath: ./Dockerfile.api
-  dockerCommand: celery -A apps.worker.worker worker --loglevel=info
-  plan: free
-  region: ohio
-  envVars:
-  - key: DATABASE_URL
-    fromDatabase:
-      name: cinerec-db
-      property: connectionString
-  - key: REDIS_URL
-    value: redis://cinerec-redis:6379
-  - key: TMDB_API_KEY
-    sync: false
-  - key: GEMINI_API_KEY
-    sync: false
-  - key: SECRET_KEY
-    generateValue: true
-  - key: GOOGLE_CLIENT_ID
-    sync: false
-  - key: GOOGLE_CLIENT_SECRET
-    sync: false
-- type: pserv
-  name: cinerec-redis
-  env: image
-  image:
-    url: redis:alpine
-  plan: free
-  region: ohio
+
 databases:
 - name: cinerec-db
   plan: free
