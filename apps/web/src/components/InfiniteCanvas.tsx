@@ -94,14 +94,20 @@ export const InfiniteCanvas = ({
       itemW = items[0].offsetWidth;
       itemH = items[0].offsetHeight;
 
-      const screenAspect = window.innerWidth / window.innerHeight;
-      const itemAspect = itemW / itemH;
-      const adjustedAspect = Math.max(2.5, screenAspect); // Massive wide room to eliminate black space
-      const targetCols = Math.sqrt(numberOfImages * adjustedAspect / itemAspect);
-      cols = Math.round(targetCols);
-      cols = Math.max(8, Math.min(cols, numberOfImages));
+      const isMobile = window.innerWidth < 768;
       
-      // Crucial fix: Floor the rows to ensure a perfect rectangle with no ragged remainder gaps
+      if (isMobile) {
+        // On mobile, force a massive tall and wide grid to completely envelop the viewport
+        cols = 14; 
+        const rows = Math.floor(numberOfImages / cols); // 150 / 14 = 10 rows (3600px height)
+      } else {
+        const screenAspect = window.innerWidth / window.innerHeight;
+        const itemAspect = itemW / itemH;
+        const targetCols = Math.sqrt(numberOfImages * screenAspect / itemAspect);
+        cols = Math.round(targetCols);
+        cols = Math.max(12, Math.min(cols, numberOfImages));
+      }
+      
       const rows = Math.floor(numberOfImages / cols);
       perfectCount = cols * rows;
 
@@ -177,7 +183,9 @@ export const InfiniteCanvas = ({
         if (i >= perfectCount) return;
 
         const newX = wrapX((item as any)._baseX + currentX);
-        const newY = wrapY((item as any)._baseY + currentY);
+        // Center the total height of the grid vertically around the screen center
+        const startY = (window.innerHeight - totalH) / 2;
+        const newY = wrapY((item as any)._baseY + currentY) + startY;
         
         // True 3D Cylindrical Projection Math
         const circumference = totalW;

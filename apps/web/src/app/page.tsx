@@ -186,7 +186,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen w-full max-w-full overflow-x-hidden flex flex-col">
+    <main className="relative min-h-[100dvh] w-full max-w-full overflow-x-hidden flex flex-col">
       <div className="ambient-bg" />
 
       {/* THE DAUNTING VOID WITH INFINITE CANVAS */}

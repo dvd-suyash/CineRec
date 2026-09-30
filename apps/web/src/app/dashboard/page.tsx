@@ -29,7 +29,7 @@ export default function DashboardPage() {
   }, []);
   
   return (
-    <main className="min-h-screen bg-[#050505] text-white selection:bg-[#CCFF00] selection:text-black overflow-x-hidden">
+    <main className="min-h-[100dvh] bg-[#050505] text-white selection:bg-[#CCFF00] selection:text-black overflow-x-hidden">
       {/* Background ambient noise */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       
