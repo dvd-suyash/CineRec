@@ -96,9 +96,10 @@ export const InfiniteCanvas = ({
 
       const screenAspect = window.innerWidth / window.innerHeight;
       const itemAspect = itemW / itemH;
-      const targetCols = Math.sqrt(numberOfImages * screenAspect / itemAspect);
+      const adjustedAspect = Math.max(1.8, screenAspect); // Force wide aspect ratio to create a large room
+      const targetCols = Math.sqrt(numberOfImages * adjustedAspect / itemAspect);
       cols = Math.round(targetCols);
-      cols = Math.max(1, Math.min(cols, numberOfImages));
+      cols = Math.max(8, Math.min(cols, numberOfImages));
       
       // Crucial fix: Floor the rows to ensure a perfect rectangle with no ragged remainder gaps
       const rows = Math.floor(numberOfImages / cols);
@@ -199,7 +200,8 @@ export const InfiniteCanvas = ({
         }
         
         // Bring the cylinder slightly closer so it fills the screen
-        const offsetZ = -100;
+        const isMobile = window.innerWidth < 768;
+        const offsetZ = isMobile ? radius * 0.4 : -100;
         
         gsap.set(item, { 
           display: "block",
