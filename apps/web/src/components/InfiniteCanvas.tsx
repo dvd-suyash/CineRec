@@ -312,8 +312,7 @@ export const InfiniteCanvas = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none ${className}`}
-      style={{ perspective: typeof window !== "undefined" && window.innerWidth >= 768 ? "1500px" : "none" }}
+      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none perspective-[1500px] ${className}`}
     >
       <div
         ref={wrapperRef}
