@@ -181,8 +181,8 @@ export const InfiniteCanvas = ({
         if (i >= perfectCount) return;
 
         const newX = wrapX((item as any)._baseX + currentX);
-        // Center the total height of the grid vertically around the screen center
-        const startY = (window.innerHeight - totalH) / 2;
+        // Center the total height of the grid vertically around the screen center ONLY on mobile
+        const startY = isMobile ? (window.innerHeight - totalH) / 2 : 0;
         const newY = wrapY((item as any)._baseY + currentY) + startY;
         
         // True 3D Cylindrical Projection Math
@@ -198,16 +198,19 @@ export const InfiniteCanvas = ({
         const finalX = Math.sin(angleRad) * radius;
         const finalZ = -Math.cos(angleRad) * radius;
         
-        // Hide elements that rotate to the back half of the cylinder
-        // This completely fixes the CSS 3D opacity clipping bug
-        if (finalZ > radius * 0.95) { // Only cull the deep back half to preserve the side walls!
+        // Restore exact original desktop culling
+        if (!isMobile && finalZ > -100) {
           gsap.set(item, { display: "none" });
           return;
         }
         
-        // Bring the cylinder slightly closer so it fills the screen
-        const isMobile = window.innerWidth < 768;
-        const offsetZ = isMobile ? radius * 0.7 : -100; // Push super close to eliminate edge black space
+        // Massive aggressive mobile culling
+        if (isMobile && finalZ > radius * 0.95) {
+          gsap.set(item, { display: "none" });
+          return;
+        }
+        
+        const offsetZ = isMobile ? radius * 0.85 : -100;
         
         gsap.set(item, { 
           display: "block",
@@ -285,7 +288,7 @@ export const InfiniteCanvas = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none [perspective:1500px] ${className}`}
+      className={`relative overflow-hidden w-full h-full bg-transparent cursor-grab select-none touch-none [perspective:1500px] md:[perspective:none] ${className}`}
     >
       <div
         ref={wrapperRef}
