@@ -50,7 +50,7 @@ async def get_version():
         "environment": settings.ENVIRONMENT,
     }
 
-from apps.api.app.routers import auth, users, movies, ratings, watchlists, chat, memories, interactions, recommendations, search, dashboard
+from apps.api.app.routers import history, auth, users, movies, ratings, watchlists, chat, memories, interactions, recommendations, search, dashboard
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["Auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["Users"])
@@ -62,4 +62,5 @@ app.include_router(memories.router, prefix=f"{settings.API_V1_STR}/memories", ta
 app.include_router(interactions.router, prefix=f"{settings.API_V1_STR}/interactions", tags=["Telemetry"])
 app.include_router(recommendations.router, prefix=f"{settings.API_V1_STR}/recommendations", tags=["Recommendations"])
 app.include_router(search.router, prefix=f"{settings.API_V1_STR}/search", tags=["Search"])
+app.include_router(history.router, prefix=f"{settings.API_V1_STR}/history", tags=["History"])
 app.include_router(dashboard.router, prefix=f"{settings.API_V1_STR}/dashboard", tags=["Dashboard"])

@@ -2,7 +2,8 @@
 
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, Fragment } from "react";
-import { XIcon, StarIcon, PlayIcon } from "lucide-react";
+import { XIcon, StarIcon, PlayIcon, PlusIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 interface Movie {
   title: string;
@@ -115,6 +116,36 @@ function CinematicCard({ movie, index, onClick }: { movie: Movie; index: number;
 }
 
 export function VisualRecommendations({ vibeTitle, movies, onModalChange }: VisualRecommendationsProps) {
+  const { data: session } = useSession();
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+
+  const addToWatchlist = async (tmdbId: string) => {
+    if (!session) return;
+    try {
+      // 1. Ensure movie exists in our DB and get internal UUID
+      const movieRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/movies/tmdb/${tmdbId}`, {
+        headers: {
+          "Authorization": `Bearer ${(session as any).accessToken}`
+        }
+      });
+      if (!movieRes.ok) return;
+      const movieJson = await movieRes.json();
+      const dbId = movieJson.data.id;
+      
+      // 2. Add to watchlist
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/watchlists/movies/${dbId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${(session as any).accessToken}`
+        }
+      });
+      if (res.ok) {
+        setAddedIds(prev => new Set(prev).add(tmdbId));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const [selectedId, setSelectedId] = useState<number | string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -287,13 +318,27 @@ export function VisualRecommendations({ vibeTitle, movies, onModalChange }: Visu
                         {selectedMovie.justification}
                       </p>
 
-                      <button 
-                        onClick={() => setIsPlaying(true)}
-                        className="px-8 py-4 bg-[#CCFF00] hover:bg-white text-black font-black uppercase tracking-widest text-sm rounded-full transition-colors flex items-center justify-center gap-3 w-fit"
-                      >
-                        <PlayIcon className="size-5 fill-black" />
-                        Watch Film
-                      </button>
+                      <div className="flex flex-wrap gap-4">
+                        <button 
+                          onClick={() => setIsPlaying(true)}
+                          className="px-8 py-4 bg-[#CCFF00] hover:bg-white text-black font-black uppercase tracking-widest text-sm rounded-full transition-colors flex items-center justify-center gap-3 w-fit"
+                        >
+                          <PlayIcon className="size-5 fill-black" />
+                          Watch Film
+                        </button>
+                        <button 
+                          onClick={() => addToWatchlist(selectedMovie.tmdb_id as string)}
+                          className={`px-8 py-4 border font-black uppercase tracking-widest text-sm rounded-full transition-colors flex items-center justify-center gap-3 w-fit ${
+                            addedIds.has(selectedMovie.tmdb_id as string) 
+                              ? "bg-white text-black border-white cursor-default" 
+                              : "bg-transparent text-white border-white/20 hover:border-white hover:bg-white hover:text-black"
+                          }`}
+                          disabled={addedIds.has(selectedMovie.tmdb_id as string)}
+                        >
+                          <PlusIcon className={`size-5 ${addedIds.has(selectedMovie.tmdb_id as string) ? "hidden" : "block"}`} />
+                          {addedIds.has(selectedMovie.tmdb_id as string) ? "Added" : "Add to Watchlist"}
+                        </button>
+                      </div>
                     </motion.div>
                   </motion.div>
                 </>
